@@ -1,0 +1,50 @@
+# Visual Studio and .NET specific files
+.vs/
+bin/
+obj/
+*.suo
+*.user
+*.userosf
+*.sln.docstates
+*.pdb
+*.opendata
+*.VC.opendata
+*.vshost.exe
+*.vshost.exe.config
+*.vshost.exe.manifest
+*.resharper
+*.resharper.user
+*.resharper.dbg
+*.resharper.testrunner
+*.resharper.solution
+*.resharper.dotSettings
+*.resharper.dotSettings.user
+*.resharper.dotSettings.local
+
+# NuGet packages
+packages/
+*.nupkg
+.nuget/packages/
+
+# Rider specific files
+.idea/
+*.iml
+
+# Visual Studio Code specific files
+.vscode/
+
+# Other common files to ignore
+TestResults/
+_ReSharper.*/
+*.log
+*.bak
+*.tmp
+*.scc
+*.vspscc
+*.vssscc
+*.buildscc
+*.pidb
+*.booproj
+*.userprefs
+*.DS_Store
+Thumbs.db
