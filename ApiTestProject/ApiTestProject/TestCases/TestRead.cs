@@ -13,33 +13,19 @@ namespace ApiTestProject.TestCases
     [TestFixture]
     public class TestRead : BaseTest
     {
-        private ServiceProvider _serviceProvider;
         private Client _client;
-        private ILogger<TestRead> _logger;
+        private ILogger<TestRead>? _logger;
         [SetUp]
         public void Setup()
         {
-            var services = new ServiceCollection();
-            services.AddLogging(builder =>
-            {
-                builder.ClearProviders(); // Clear default providers
-                builder.SetMinimumLevel(LogLevel.Information);
-                builder.AddConsole();
-            });
-
-            _serviceProvider = services.BuildServiceProvider();
-
-            string? baseUrl = Configuration["BaseUrl"];
-            _logger = _serviceProvider.GetService<ILogger<TestRead>>();
-            var client_logger = _serviceProvider.GetService<ILogger<Client>>();
-            _client = new Client(baseUrl, client_logger);
+            _client = new Client();
+            _logger = _client.ServiceProvider.GetService<ILogger<TestRead>>();
         }
 
         [TearDown]
         public void TearDown()
         {
             _client?.Dispose();
-            _serviceProvider.Dispose();
         }
 
         [Test, TestCaseSource(nameof(BoundaryTestValues))]
@@ -47,7 +33,7 @@ namespace ApiTestProject.TestCases
         {
             _logger.LogInformation("Starting Test");
             var response = _client.GetPostsAsync<Post>(post.Id.ToString());
-            _logger.LogInformation($"Response Data: {response.Result.Data}");
+            _logger.LogInformation("Response Data: {PostId}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();
@@ -72,6 +58,7 @@ namespace ApiTestProject.TestCases
         public void GetAllPosts()
         {
             var response = _client.GetAllPostsAsync<List<Post>>();
+            _logger.LogInformation("The result StatusCode: {StatusCode}", response.Result.StatusCode);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();

@@ -2,7 +2,6 @@
 using ApiTestProject.Model;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,34 +13,20 @@ namespace ApiTestProject.TestCases
     [TestFixture]
     public class TestCreate : BaseTest
     {
-        private ServiceProvider _serviceProvider;
         private Client _client;
-        private ILogger<TestCreate> _logger;
+        private ILogger<TestCreate>? _logger;
 
         [SetUp]
         public void Setup()
         {
-            var services = new ServiceCollection();
-            services.AddLogging(builder =>
-            {
-                builder.ClearProviders(); // Clear default providers
-                builder.SetMinimumLevel(LogLevel.Information);
-                builder.AddConsole();
-            });
-
-            _serviceProvider = services.BuildServiceProvider();
-
-            string? baseUrl = Configuration["BaseUrl"];
-            _logger = _serviceProvider.GetService<ILogger<TestCreate>>();
-            var client_logger = _serviceProvider.GetService<ILogger<Client>>();
-            _client = new Client(baseUrl, client_logger);
+            _client = new Client();
+            _logger = _client.ServiceProvider.GetService<ILogger<TestCreate>>();
         }
 
         [TearDown]
         public void TearDown()
         {
             _client?.Dispose();
-            _serviceProvider.Dispose();
         }
 
         [Test]
@@ -53,6 +38,7 @@ namespace ApiTestProject.TestCases
             post.Body = "A person made from other people";
             post.UserId = 11;
             var response = _client.CreatePostsAsync<Post>(post);
+            _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();
@@ -70,6 +56,7 @@ namespace ApiTestProject.TestCases
             post.Body = "A person made from other people";
             post.UserId = 11;
             var response = _client.CreatePostsAsync<Post>(post);
+            _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();
@@ -87,7 +74,7 @@ namespace ApiTestProject.TestCases
             post.Title = "Frankenstein";
             post.UserId = 11;
             var response = _client.CreatePostsAsync<BadPost>(post);
-            _logger.LogInformation("The result data: {post}", response.Result.Data);
+            _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();

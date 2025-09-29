@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RestSharp;
 
 namespace ApiTestProject.APIWrapper
@@ -6,14 +8,38 @@ namespace ApiTestProject.APIWrapper
     public class Client : IPlaceholder, IDisposable
     {
         private readonly RestClient _restClient;
-        private readonly ILogger<Client> _logger;
+        private readonly ILogger<Client>? _logger;
+        private readonly IConfiguration _configuration;
+        private ServiceProvider _serviceProvider;
 
-        public Client(string? baseUrl, ILogger<Client> logger)
+        public ServiceProvider ServiceProvider => _serviceProvider;
+
+        public Client()
         {
-            _logger = logger;
+            _configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var services = new ServiceCollection();
+            services.AddLogging(builder =>
+            {
+                builder.ClearProviders(); // Clear default providers
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddConsole();
+            });
+
+            _serviceProvider = services.BuildServiceProvider();
+
+            _logger = _serviceProvider.GetService<ILogger<Client>>();
+            string? baseUrl = _configuration["BaseUrl"];
             ArgumentNullException.ThrowIfNull(baseUrl);
             var options = new RestClientOptions(baseUrl);
             _restClient = new RestClient(options);
+        }
+
+        internal static Client Create()
+        {
+            return new Client();
         }
 
         public async Task<RestResponse<T>> GetPostsAsync<T>(string id)
@@ -57,7 +83,9 @@ namespace ApiTestProject.APIWrapper
         }
         public void Dispose()
         {
+            _logger.LogInformation("Disposing RestClient and ServiceProider");
             _restClient?.Dispose();
+            _serviceProvider?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

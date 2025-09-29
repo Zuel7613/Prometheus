@@ -2,7 +2,6 @@
 using ApiTestProject.Model;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,40 +13,27 @@ namespace ApiTestProject.TestCases
     [TestFixture]
     public class TestDelete : BaseTest
     {
-        private ServiceProvider _serviceProvider;
         private Client _client;
-        private ILogger<TestDelete> _logger;
+        private ILogger<TestDelete>? _logger;
 
         [SetUp]
         public void Setup()
         {
-            var services = new ServiceCollection();
-            services.AddLogging(builder =>
-            {
-                builder.ClearProviders(); // Clear default providers
-                builder.SetMinimumLevel(LogLevel.Information);
-                builder.AddConsole();
-            });
-
-            _serviceProvider = services.BuildServiceProvider();
-
-            string? baseUrl = Configuration["BaseUrl"];
-            _logger = _serviceProvider.GetService<ILogger<TestDelete>>();
-            var client_logger = _serviceProvider.GetService<ILogger<Client>>();
-            _client = new Client(baseUrl, client_logger);
+            _client = new Client();
+            _logger = _client.ServiceProvider.GetService<ILogger<TestDelete>>();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _client?.Dispose();
-            _serviceProvider.Dispose();
+           _client?.Dispose();
         }
 
         [Test]
         public void DeleteFirstPost()
         {
             var response = _client.DeletePostsAsync<Post>("1");
+            _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();
@@ -59,7 +45,9 @@ namespace ApiTestProject.TestCases
         public void DeleteFirstPostTwice()
         {
             var response_one = _client.DeletePostsAsync<Post>("1");
+            _logger.LogInformation("The result data id: {post}", response_one.Result.Data?.Id);
             var response_two = _client.DeletePostsAsync<Post>("1");
+            _logger.LogInformation("The result data id: {post}", response_two.Result.Data?.Id);
             using (new AssertionScope())
             {
                 response_one.Result.IsSuccessStatusCode.Should().BeTrue();
