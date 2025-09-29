@@ -31,20 +31,20 @@ namespace ApiTestProject.APIWrapper
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> CreatePostsAsync<T>(T Payload)
+        public async Task<RestResponse<T>> CreatePostsAsync<T>(T payload)
         {
-            _logger.LogInformation("Sending POST for post: {Post}", Payload);
+            _logger.LogInformation("Sending POST for post: {Post}", payload);
             var request = new RestRequest(Endpoints.POSTS, Method.Post)
-                .AddBody(Payload);
+                .AddBody(payload);
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> UpdatePostsAsync<T>(string id, T Payload)
+        public async Task<RestResponse<T>> UpdatePostsAsync<T>(string id, T payload)
         {
-            _logger.LogInformation("Sending PUT posts for id: {PostId} and post: {payload}", id, Payload);
+            _logger.LogInformation("Sending PUT posts for id: {PostId} and post: {payload}", id, payload);
             var request = new RestRequest(Endpoints.POSTS_ID, Method.Put)
                 .AddUrlSegment("id", id)
-                .AddBody(Payload);
+                .AddBody(payload);
             return await _restClient.ExecuteAsync<T>(request);
         }
 

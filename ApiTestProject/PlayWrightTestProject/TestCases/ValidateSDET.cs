@@ -1,7 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
-using NUnit.Framework;
 using PlayWrightTestProject.Google;
 using PlayWrightTestProject.Pages;
 using PlayWrightTestProject.PlaywrightWrapper;

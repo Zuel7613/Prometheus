@@ -58,7 +58,7 @@ namespace ApiTestProject.TestCases
         public void UpdateLastPost()
         {
             var post = new Post();
-            post.Id = 1;
+            post.Id = 100;
             post.Title = "Frankenstein";
             post.Body = "A person made from other people";
             post.UserId = 11;

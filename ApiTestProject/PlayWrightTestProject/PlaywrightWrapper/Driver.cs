@@ -1,9 +1,4 @@
 ﻿using Microsoft.Playwright;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlayWrightTestProject.PlaywrightWrapper
 {
@@ -20,9 +15,9 @@ namespace PlayWrightTestProject.PlaywrightWrapper
 
         private async Task<IPage> InitializePlaywright()
         {
-            IPlaywright palywright = await Playwright.CreateAsync();
+            IPlaywright playwright = await Playwright.CreateAsync();
 
-            _browser = await palywright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            _browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
                 SlowMo = 800,
                 Headless = false
