@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using PlayWrightTestProject.Google;
 using PlayWrightTestProject.Pages;
 using PlayWrightTestProject.PlaywrightWrapper;
@@ -11,8 +12,13 @@ namespace PlayWrightTestProject.TestCases
         [SetUp]
         public async Task Setup()
         {
-            Driver = await DriverFactory.CreateAsync(BrowserKind.Chromium);
-            ;
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var browserKind = configuration.GetSection("TestDriver:BrowserKind").Key;
+            
+            Enum.TryParse(browserKind, out BrowserKind browser);
+            Driver = await DriverFactory.CreateAsync(browser);
         }
 
         [TearDown]
