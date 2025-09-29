@@ -9,15 +9,16 @@ namespace PlayWrightTestProject.TestCases
     {
         public Driver Driver;
         [SetUp]
-        public void Setup()
+        public async Task Setup()
         {
-            Driver = new Driver();
+            Driver = await DriverFactory.CreateAsync(BrowserKind.Chromium);
+            ;
         }
 
         [TearDown]
-        public void Teardown()
+        public async Task Teardown()
         {
-            Driver.Dispose();
+            await Driver.DisposeAsync();
         }
 
         [Test]

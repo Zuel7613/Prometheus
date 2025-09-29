@@ -2,33 +2,65 @@
 
 namespace PlayWrightTestProject.PlaywrightWrapper
 {
-    public class Driver : IDisposable
+    public class Driver : IAsyncDisposable
     {
-        private readonly Task<IPage> _page;
-        private IBrowser? _browser;
-        public Driver()
+        private readonly IPlaywright _playwright;
+        private readonly IBrowser _browser;
+        private readonly IBrowserContext _context;
+        private readonly IPage _page;
+
+        // Expose page and optionally context/browser for advanced uses
+        public IPage Page => _page;
+        public IBrowserContext Context => _context;
+        public IBrowser Browser => _browser;
+
+        private Driver(IPlaywright playwright, IBrowser browser, IBrowserContext context, IPage page)
         {
-            _page = InitializePlaywright();
+            _playwright = playwright;
+            _browser = browser;
+            _context = context;
+            _page = page;
         }
 
-        public IPage Page => _page.Result;
 
-        private async Task<IPage> InitializePlaywright()
+        // Factory method used by DriverFactory
+        internal static async Task<Driver> CreateAsync(BrowserKind kind, BrowserTypeLaunchOptions launchOptions, BrowserNewContextOptions? contextOptions = null)
         {
-            IPlaywright playwright = await Playwright.CreateAsync();
+            var playwright = await Playwright.CreateAsync();
 
-            _browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            IBrowser browser = kind switch
             {
-                SlowMo = 800,
-                Headless = false
+                BrowserKind.Firefox => await playwright.Firefox.LaunchAsync(launchOptions),
+                BrowserKind.WebKit => await playwright.Webkit.LaunchAsync(launchOptions),
+                _ => await playwright.Chromium.LaunchAsync(launchOptions)
+            };
+
+            var context = await browser.NewContextAsync(contextOptions ?? new BrowserNewContextOptions
+            {
+                ViewportSize = new ViewportSize { Width = 1280, Height = 800 }
             });
 
-            return await _browser.NewPageAsync();
+            var page = await context.NewPageAsync();
+            return new Driver(playwright, browser, context, page);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _browser?.CloseAsync();
+            // Dispose in correct order: page/context/browser/playwright
+            try
+            {
+                await _context.CloseAsync();
+            }
+            catch { /* ignore */ }
+
+            try
+            {
+                await _browser.CloseAsync();
+            }
+            catch { /* ignore */ }
+
+            _playwright.Dispose();
         }
+
     }
 }
