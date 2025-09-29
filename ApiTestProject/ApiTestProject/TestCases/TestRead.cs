@@ -9,18 +9,29 @@ using System.Net;
 
 namespace ApiTestProject.TestCases
 {
-    [Parallelizable(scope: ParallelScope.All)]
+    [Parallelizable(scope: ParallelScope.Self)]
     [TestFixture]
     public class TestRead : BaseTest
     {
+        private ServiceProvider _serviceProvider;
         private Client _client;
         private ILogger<TestRead> _logger;
         [SetUp]
         public void Setup()
         {
+            var services = new ServiceCollection();
+            services.AddLogging(builder =>
+            {
+                builder.ClearProviders(); // Clear default providers
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddConsole();
+            });
+
+            _serviceProvider = services.BuildServiceProvider();
+
             string? baseUrl = Configuration["BaseUrl"];
-            _logger = ServiceProvider.GetService<ILogger<TestRead>>();
-            var client_logger = ServiceProvider.GetService<ILogger<Client>>();
+            _logger = _serviceProvider.GetService<ILogger<TestRead>>();
+            var client_logger = _serviceProvider.GetService<ILogger<Client>>();
             _client = new Client(baseUrl, client_logger);
         }
 
@@ -28,6 +39,7 @@ namespace ApiTestProject.TestCases
         public void TearDown()
         {
             _client?.Dispose();
+            _serviceProvider.Dispose();
         }
 
         [Test, TestCaseSource(nameof(BoundaryTestValues))]
