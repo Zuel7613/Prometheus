@@ -37,7 +37,7 @@ namespace ApiTestProject.TestCases
             post.Title = "Frankenstein";
             post.Body = "A person made from other people";
             post.UserId = 11;
-            var response = _client.CreatePostsAsync<Post>(post);
+            var response = _client.ExecuteCreateAsync<Post>(post);
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -55,7 +55,7 @@ namespace ApiTestProject.TestCases
             post.Id = 101;
             post.Body = "A person made from other people";
             post.UserId = 11;
-            var response = _client.CreatePostsAsync<Post>(post);
+            var response = _client.ExecuteCreateAsync<Post>(post);
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -73,7 +73,7 @@ namespace ApiTestProject.TestCases
             post.Id = 101;
             post.Title = "Frankenstein";
             post.UserId = 11;
-            var response = _client.CreatePostsAsync<BadPost>(post);
+            var response = _client.ExecuteCreateAsync<BadPost>(post);
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {

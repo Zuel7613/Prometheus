@@ -32,7 +32,7 @@ namespace ApiTestProject.TestCases
         [Test]
         public void DeleteFirstPost()
         {
-            var response = _client.DeletePostsAsync<Post>("1");
+            var response = _client.ExecuteDeleteAsync<Post>("1");
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -44,9 +44,9 @@ namespace ApiTestProject.TestCases
         [Test]
         public void DeleteFirstPostTwice()
         {
-            var response_one = _client.DeletePostsAsync<Post>("1");
+            var response_one = _client.ExecuteDeleteAsync<Post>("1");
             _logger.LogInformation("The result data id: {post}", response_one.Result.Data?.Id);
-            var response_two = _client.DeletePostsAsync<Post>("1");
+            var response_two = _client.ExecuteDeleteAsync<Post>("1");
             _logger.LogInformation("The result data id: {post}", response_two.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -60,7 +60,7 @@ namespace ApiTestProject.TestCases
         [Test]
         public void DeleteFakePost()
         {
-            var response = _client.DeletePostsAsync<Post>("101");
+            var response = _client.ExecuteDeleteAsync<Post>("101");
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeTrue();

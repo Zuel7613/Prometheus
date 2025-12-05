@@ -42,7 +42,7 @@ namespace ApiTestProject.APIWrapper
             return new Client();
         }
 
-        public async Task<RestResponse<T>> GetPostsAsync<T>(string id)
+        public async Task<RestResponse<T>> ExecuteGetAsync<T>(string id)
         {
             _logger.LogInformation("Sending GET for post of id: {PostId}", id);
             var request = new RestRequest(Endpoints.POSTS_ID, Method.Get)
@@ -50,14 +50,14 @@ namespace ApiTestProject.APIWrapper
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> GetAllPostsAsync<T>()
+        public async Task<RestResponse<T>> ExecuteGetAsync<T>()
         {
             _logger.LogInformation("Sending GET for all Posts");
             var request = new RestRequest(Endpoints.POSTS, Method.Get);
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> CreatePostsAsync<T>(T payload)
+        public async Task<RestResponse<T>> ExecuteCreateAsync<T>(T payload)
         {
             _logger.LogInformation("Sending POST for post: {Post}", payload);
             var request = new RestRequest(Endpoints.POSTS, Method.Post)
@@ -65,7 +65,7 @@ namespace ApiTestProject.APIWrapper
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> UpdatePostsAsync<T>(string id, T payload)
+        public async Task<RestResponse<T>> ExecutePutAsync<T>(string id, T payload)
         {
             _logger.LogInformation("Sending PUT posts for id: {PostId} and post: {payload}", id, payload);
             var request = new RestRequest(Endpoints.POSTS_ID, Method.Put)
@@ -74,7 +74,7 @@ namespace ApiTestProject.APIWrapper
             return await _restClient.ExecuteAsync<T>(request);
         }
 
-        public async Task<RestResponse<T>> DeletePostsAsync<T>(string id)
+        public async Task<RestResponse<T>> ExecuteDeleteAsync<T>(string id)
         {
             _logger.LogInformation("Sending DELETE post for id: {PostId}", id);
             var request = new RestRequest(Endpoints.POSTS_ID, Method.Delete)

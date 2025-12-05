@@ -36,7 +36,7 @@ namespace ApiTestProject.TestCases
             post.Title = "Frankenstein";
             post.Body = "A person made from other people";
             post.UserId = 11;
-            var response = _client.UpdatePostsAsync<Post>(post.Id.ToString(), post);
+            var response = _client.ExecutePutAsync<Post>(post.Id.ToString(), post);
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -55,7 +55,7 @@ namespace ApiTestProject.TestCases
             post.Title = "Frankenstein";
             post.Body = "A person made from other people";
             post.UserId = 11;
-            var response = _client.UpdatePostsAsync<Post>(post.Id.ToString(), post);
+            var response = _client.ExecutePutAsync<Post>(post.Id.ToString(), post);
             _logger.LogInformation("The result data id: {post}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -74,7 +74,7 @@ namespace ApiTestProject.TestCases
             post.Title = "Frankenstein";
             post.Body = "A person made from other people";
             post.UserId = 11;
-            var response = _client.UpdatePostsAsync<Post>(post.Id.ToString(), post);
+            var response = _client.ExecutePutAsync<Post>(post.Id.ToString(), post);
             _logger.LogInformation("The result StatusCode: {StatusCode}", response.Result.StatusCode);
             using (new AssertionScope())
             {

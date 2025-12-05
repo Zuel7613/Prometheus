@@ -32,7 +32,7 @@ namespace ApiTestProject.TestCases
         public void GetPost_BoundaryValue(Post post)
         {
             _logger.LogInformation("Starting Test");
-            var response = _client.GetPostsAsync<Post>(post.Id.ToString());
+            var response = _client.ExecuteGetAsync<Post>(post.Id.ToString());
             _logger.LogInformation("Response Data: {PostId}", response.Result.Data?.Id);
             using (new AssertionScope())
             {
@@ -46,7 +46,7 @@ namespace ApiTestProject.TestCases
         [Test]
         public void GetPost_EntryDoesNotExist()
         {
-            var response = _client.GetPostsAsync<Post>("101");
+            var response = _client.ExecuteGetAsync<Post>("101");
             using (new AssertionScope())
             {
                 response.Result.IsSuccessStatusCode.Should().BeFalse();
@@ -57,7 +57,7 @@ namespace ApiTestProject.TestCases
         [Test]
         public void GetAllPosts()
         {
-            var response = _client.GetAllPostsAsync<List<Post>>();
+            var response = _client.ExecuteGetAsync<List<Post>>();
             _logger.LogInformation("The result StatusCode: {StatusCode}", response.Result.StatusCode);
             using (new AssertionScope())
             {
